@@ -4,6 +4,7 @@ import _ from 'lodash';
 
 class Store{
     constructor (config) {
+        let _self = this;
         Firebase.initializeApp({
             serviceAccount: config.apijson,
             databaseURL: config.database
@@ -12,12 +13,17 @@ class Store{
         this.db = Firebase.database();
         this.ref = this.db.ref("/");
         this.ref.once("value", function(snapshot) {
-            console.log(snapshot.val());
+            _self.lunchList = snapshot.val();
         });
     }
-    
-    getRandomLunchVenue(){
 
+    getList(restriction){
+        //TODO: filter
+        return this.lunchList;
+    }
+    getRandomLunchVenue(restriction){
+        console.log('Meal called',restriction);
+        console.log(this.lunchList);
     }
 }
 

@@ -3,9 +3,9 @@ import Botkit from 'botkit';
 import Cleverbot from 'cleverbot.io';
 
 class Bot{
-    constructor (config){
-       
+    constructor (config, store){
         this.config = config;
+        this.store = store;
 
         this.cleverbot = new Cleverbot(this.config.cleverbot.apiuser, this.config.cleverbot.apikey);
         this.cleverbot.setNick('LunchBot'); 
@@ -41,17 +41,39 @@ class Bot{
         let _self = this;
 
         //Listens for keywords
-        this.controller.hears('suggest (.*)',['message_received'],function(bot,message) {
+        this.controller.hears('suggest (.*)',['direct_message','direct_mention','mention'],function(bot,message) {
             let mealType = message.match[1];
             switch (mealType){
                 case 'breakfast':
+                    _self.store.getRandomLunchVenue('breakfast');
                     break;
                 case 'lunch':
+                    _self.store.getRandomLunchVenue('lunch');
                     break;
                 case 'dinner':
+                    _self.store.getRandomLunchVenue('dinner');
                     break;
                 default:
                     bot.reply(message, 'Hmm, not sure what you meant. I can suggest breakfast, lunch or dinner though');
+                    break;
+            }
+        });
+
+        this.controller.hears('list (.*)',['direct_message','direct_mention','mention'],function(bot,message) {
+            let restriction = message.match[1];
+            switch (restriction){
+                case 'breakfast':
+                    
+                    break;
+                case 'lunch':
+                    
+                    break;
+                case 'dinner':
+                    
+                    break;
+                default:
+                    //List all
+                    _self.store.getList();
                     break;
             }
         });
@@ -80,13 +102,15 @@ class Bot{
 
         this.controller.hears('',['direct_message','direct_mention','mention'],function(bot,message) {  
             var msg = message.text;
-            cleverbot.ask(msg, function (err, response) {
-                if (!err) {
-                    bot.reply(message, response);
-                } else {
-                    console.log('cleverbot err: ' + err);
-                }
-            });
+            if (msg.length){
+                _self.cleverbot.ask(msg, function (err, response) {
+                    if (!err) {
+                        bot.reply(message, response);
+                    } else {
+                        console.log('cleverbot err: ' + err);
+                    }
+                });
+            }
         })
     }
 }
