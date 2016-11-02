@@ -9,10 +9,9 @@ class Store{
             serviceAccount: config.apijson,
             databaseURL: config.database
         });
-
         this.db = Firebase.database();
-        this.ref = this.db.ref("/");
-        this.ref.once("value", function(snapshot) {
+        this.ref = this.db.ref('/');
+        this.ref.on('value', function(snapshot) {
             _self.lunchList = snapshot.val();
         });
     }
