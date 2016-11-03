@@ -22,20 +22,25 @@ class Bot{
         this.controller.spawn({
             token: this.config.lunchbot.apitoken,
         }).startRTM();
+    };
 
-    }
-
-    setHelpWelcomeMessage(bot, message){
-        let _self = this;
+    getUserName(bot, message,cb){
         bot.api.users.info({user: message.user}, (error, response) => {
             let {name} = response.user;
-            bot.reply(message, `Hi @${name} :wave:\n\n Welcome to the ${_self.config.slack.channel} channel. You can ask me for lunch suggestions. \n Here are some commands you can start with: \n @${_self.config.slack.username} suggest lunch \n @${_self.config.slack.username} suggest dinner \n\n Also at ${_self.config.schedule.text}, I will suggest a random venue for lunch. \n\nTo see this message again, type @${_self.config.slack.username} help`);
+            cb(name);
         })
     }
 
-    getCleverBot(){
-        return this.cleverbot;
-    }
+    cleverBotResponse(bot, message){
+        let msg = message.text;
+         this.cleverbot.ask(msg, function (err, response) {
+            if (!err) {
+                bot.reply(message, response);
+            } else {
+                console.log('cleverbot err: ' + err);
+            }
+        });
+    };
 }
 
 export default Bot;

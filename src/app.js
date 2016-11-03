@@ -5,10 +5,10 @@ import Bot from './lib/bot';
 import Store from './lib/store';
 
 let store = new Store(config.firebase);
-let bot = new Bot(config, store);
+let slackbot = new Bot(config);
 
 //Listens for keywords
-bot.controller.hears('suggest (.*)',['direct_message','direct_mention','mention'],function(bot,message) {
+slackbot.controller.hears('suggest (.*)',['direct_message','direct_mention','mention'],function(bot,message) {
     let mealType = message.match[1];
     switch (mealType){
         case 'breakfast':
@@ -26,7 +26,7 @@ bot.controller.hears('suggest (.*)',['direct_message','direct_mention','mention'
     }
 });
 
-bot.controller.hears('list (.*)',['direct_message','direct_mention','mention'],function(bot,message) {
+slackbot.controller.hears(['list (.*)', 'list', 'list all'],['direct_message','direct_mention','mention'],function(bot,message) {
     let restriction = message.match[1];
     switch (restriction){
         case 'breakfast':
@@ -38,6 +38,9 @@ bot.controller.hears('list (.*)',['direct_message','direct_mention','mention'],f
         case 'dinner':
             
             break;
+        case 'all':
+            
+            break;    
         default:
             //List all
             console.log(store.getList());
@@ -45,38 +48,29 @@ bot.controller.hears('list (.*)',['direct_message','direct_mention','mention'],f
     }
 });
 
-bot.controller.hears(['hello', 'hi', ':wave:', 'hola', 'you there'],['direct_message','direct_mention','mention'],function(bot,message) {
-    bot.api.users.info({user: message.user}, (error, response) => {
-        let {name, real_name} = response.user;
-        bot.reply(message, `Hi @${name} :wave:`);
+
+slackbot.controller.hears(['help', 'intro'],['direct_message','direct_mention','mention'],function(bot,message) {
+    let user = new Promise((resolve,reject) => slackbot.getUserName(bot,message,resolve));
+    user.then((name)=>{
+        var txt = `Hi @${name} :wave:\n\n Welcome to the ${config.slack.channel} channel. You can ask me for lunch suggestions. \n Here are some commands you can start with: \n @${config.slack.username} suggest lunch \n @${config.slack.username} suggest dinner \n\n Also at ${config.schedule.text}, I will suggest a random venue for lunch. \n\nTo see this message again, type @${config.slack.username} help`;
+        bot.reply(message, txt);
     })
 });
 
-bot.controller.hears(['help', 'intro'],['direct_message','direct_mention','mention'],function(bot,message) {
-    bot.setHelpWelcomeMessage(bot,message);
-});
-
 //Listens for RTM events
-bot.controller.on('user_channel_join', function(bot, message) {
-    bot.setHelpWelcomeMessage(bot,message);
+slackbot.controller.on('user_channel_join', function(bot, message) {
+    let user = new Promise((resolve,reject) => slackbot.getUserName(bot,message,resolve));
+    user.then((name)=>{
+        var txt = `Hi @${name} :wave:, welcome to the ${config.slack.channel} channel`;
+        bot.reply(message, txt);
+    })
 });
 
 
 //Making non meal related conversations
-bot.controller.on(['direct_message','mention','direct_mention'],function(bot,message) {
-    bot.reply(message,'Yes Boss? :smiley:');
-});
-
-bot.controller.hears('',['direct_message','direct_mention','mention'],function(bot,message) {  
-    var msg = message.text;
-    if (msg.length){
-        var cleverbot = bot.getCleverBot();
-        cleverbot.ask(msg, function (err, response) {
-            if (!err) {
-                bot.reply(message, response);
-            } else {
-                console.log('cleverbot err: ' + err);
-            }
-        });
+slackbot.controller.hears('',['direct_message','direct_mention','mention'],function(bot,message) {  
+    let msg = message.text;
+    if (msg.length) {
+       slackbot.cleverBotResponse(bot,message);
     }
 });

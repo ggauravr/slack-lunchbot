@@ -18,6 +18,7 @@ class Store{
 
     getList(restriction){
         //TODO: filter
+        
         return this.lunchList;
     }
     getRandomLunchVenue(restriction){
