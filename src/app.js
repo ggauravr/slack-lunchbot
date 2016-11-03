@@ -27,7 +27,7 @@ slackbot.controller.hears(['list (.*)', 'list', 'list all'],['direct_message','d
 slackbot.controller.hears(['help', 'intro'],['direct_message','direct_mention','mention'],function(bot,message) {
     let user = new Promise((resolve,reject) => slackbot.getUserName(bot,message,resolve));
     user.then((name)=>{
-        var txt = `Hi @${name} :wave:\n\n Welcome to the ${config.slack.channel} channel. You can ask me for lunch suggestions. \n Here are some commands you can start with: \n @${config.slack.username} suggest lunch \n @${config.slack.username} suggest dinner \n\n Also at ${config.schedule.text}, I will suggest a random venue for lunch. \n\nTo see this message again, type @${config.slack.username} help`;
+        var txt = `Hi @${name} :wave:\n\n Welcome to the ${config.slack.channel} channel. You can ask me for a lunch (breakfast or dinner) suggestion. \n Here are some commands you can start with: \n \`\`\`@${config.slack.username} suggest\n@${config.slack.username} suggest dinner\n@${config.slack.username} list \`\`\`\n\n Also at ${config.schedule.text}, I will suggest a random venue for lunch. \n\n`;
         bot.reply(message, txt);
     })
 });
@@ -36,7 +36,7 @@ slackbot.controller.hears(['help', 'intro'],['direct_message','direct_mention','
 slackbot.controller.on('user_channel_join', function(bot, message) {
     let user = new Promise((resolve,reject) => slackbot.getUserName(bot,message,resolve));
     user.then((name)=>{
-        var txt = `Hi @${name} :wave:, welcome to the ${config.slack.channel} channel`;
+        var txt = `Hi @${name} :wave:\n\nWelcome to the ${config.slack.channel} channel! Type \`@${config.slack.username} help\` for info.`;
         bot.reply(message, txt);
     })
 });
