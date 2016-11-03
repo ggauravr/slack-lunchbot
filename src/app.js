@@ -6,46 +6,21 @@ import Store from './lib/store';
 
 let store = new Store(config.firebase);
 let slackbot = new Bot(config);
+const AVAILABILITY = ['breakfast','lunch','dinner'];
 
 //Listens for keywords
-slackbot.controller.hears('suggest (.*)',['direct_message','direct_mention','mention'],function(bot,message) {
+slackbot.controller.hears(['suggest (.*)', 'suggest'],['direct_message','direct_mention','mention'],function(bot,message) {
     let mealType = message.match[1];
-    switch (mealType){
-        case 'breakfast':
-            store.getRandomLunchVenue('breakfast');
-            break;
-        case 'lunch':
-            store.getRandomLunchVenue('lunch');
-            break;
-        case 'dinner':
-            store.getRandomLunchVenue('dinner');
-            break;
-        default:
-            bot.reply(message, 'Hmm, not sure what you meant. I can suggest breakfast, lunch or dinner though');
-            break;
-    }
+    let restriction = (AVAILABILITY.indexOf(mealType) < 0) ? 'all' : mealType;
+    let suggestion = store.getRandomLunchVenue(restriction);
+    bot.reply(message, `Let's go to :knife_fork_plate: *${suggestion.title}* !`);
 });
 
 slackbot.controller.hears(['list (.*)', 'list', 'list all'],['direct_message','direct_mention','mention'],function(bot,message) {
-    let restriction = message.match[1];
-    switch (restriction){
-        case 'breakfast':
-            
-            break;
-        case 'lunch':
-            
-            break;
-        case 'dinner':
-            
-            break;
-        case 'all':
-            
-            break;    
-        default:
-            //List all
-            console.log(store.getList());
-            break;
-    }
+    let mealType = message.match[1];
+    let restriction = (AVAILABILITY.indexOf(mealType) < 0) ? 'all' : mealType;
+    let list = store.getVenueList(restriction);
+    //bot.reply(message, `Let's go to :knife_fork_plate: *${suggestion.title}* !`);
 });
 
 
