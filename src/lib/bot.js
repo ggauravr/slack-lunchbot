@@ -21,8 +21,23 @@ class Bot{
 
         this.controller.spawn({
             token: this.config.lunchbot.apitoken,
+            incoming_webhook: {
+                url: this.config.slack.incomingwebhook
+            }
         }).startRTM();
     };
+
+    sendIncomingWebhook(msg){
+        let _self = this;
+        this.sendWebhook({
+            text: msg,
+            channel: _self.config.slack.channel,
+        },function(err,res) {
+            if (err) {
+                console.log('sendWebhook error');
+            }
+        });
+    }
 
     getUserName(bot, message,cb){
         bot.api.users.info({user: message.user}, (error, response) => {

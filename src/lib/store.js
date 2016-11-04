@@ -1,7 +1,6 @@
 'use strict';
 import Firebase from 'firebase';
 import _ from 'lodash';
-//import {randomRange} from './util';
 
 class Store{
     constructor (config) {
@@ -20,14 +19,14 @@ class Store{
     getVenueList(restriction){
         let items;
         if (restriction !== 'all'){
-            items = _.filter(this.foodList, (o)=> {return o.availability[restriction]});
+            items = _.filter(this.foodList, (o)=> {return o.availability[restriction.toLowerCase()]});
         } else{
             items = this.foodList;
         }
-        return items;
+        return _.sortBy(items, ['title']);
     }
     getRandomLunchVenue(restriction){
-        let items = this.getList(restriction);
+        let items = this.getVenueList(restriction);
         let filtered = _.shuffle(items);
         return _.first(_.values(filtered));
     }

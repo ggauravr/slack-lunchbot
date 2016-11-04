@@ -1,8 +1,9 @@
 'use strict';
 import config from './config';
 import Bot from './lib/bot';
-//import setSchedule from './lib/schedule';
 import Store from './lib/store';
+import Schedule from './lib/node-schedule';
+import {forEach, filter} from 'lodash';
 
 let store = new Store(config.firebase);
 let slackbot = new Bot(config);
@@ -11,16 +12,19 @@ const AVAILABILITY = ['breakfast','lunch','dinner'];
 //Listens for keywords
 slackbot.controller.hears(['suggest (.*)', 'suggest'],['direct_message','direct_mention','mention'],function(bot,message) {
     let mealType = message.match[1];
-    let restriction = (AVAILABILITY.indexOf(mealType) < 0) ? 'all' : mealType;
+    let restriction = (AVAILABILITY.indexOf(mealType.toLowerCase()) < 0) ? 'all' : mealType.toLowerCase();
     let suggestion = store.getRandomLunchVenue(restriction);
     bot.reply(message, `Let's go to :knife_fork_plate: *${suggestion.title}* !`);
 });
 
 slackbot.controller.hears(['list (.*)', 'list', 'list all'],['direct_message','direct_mention','mention'],function(bot,message) {
     let mealType = message.match[1];
-    let restriction = (AVAILABILITY.indexOf(mealType) < 0) ? 'all' : mealType;
+    let restriction = (AVAILABILITY.indexOf(mealType.toLowerCase()) < 0) ? 'all' : mealType.toLowerCase();
     let list = store.getVenueList(restriction);
-    //bot.reply(message, `Let's go to :knife_fork_plate: *${suggestion.title}* !`);
+    let txt = '';
+    let index = 0;
+    forEach(list, (v,k)=> txt += `${++index}. ${v.title} \n`);
+    bot.reply(message, `Here you are:\n\n ${txt} \n`);
 });
 
 
@@ -48,4 +52,11 @@ slackbot.controller.hears('',['direct_message','direct_mention','mention'],funct
     if (msg.length) {
        slackbot.cleverBotResponse(bot,message);
     }
+});
+
+//Schedule
+let announcement = Schedule.scheduleJob(config.scheduler.schedule, function(){
+    let suggestion = store.getRandomLunchVenue('all');
+    let txt = `@channel Let's go to ${suggestion} !`; 
+    slackbot.sendIncomingWebhook(txt);
 });
