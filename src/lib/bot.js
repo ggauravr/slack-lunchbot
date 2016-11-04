@@ -20,18 +20,23 @@ class Bot{
         });
 
         this.controller.spawn({
-            token: this.config.lunchbot.apitoken,
+            token: this.config.lunchbot.apitoken
+        }).startRTM();
+
+        this.botWebhook = this.controller.spawn({
             incoming_webhook: {
                 url: this.config.slack.incomingwebhook
             }
-        }).startRTM();
+        })
     };
 
     sendIncomingWebhook(msg){
         let _self = this;
-        this.sendWebhook({
-            text: msg,
+        this.botWebhook.sendWebhook({
+            username: _self.config.slack.username,
+            icon_emoji: _self.config.slack.iconemoji,
             channel: _self.config.slack.channel,
+            text: msg
         },function(err,res) {
             if (err) {
                 console.log('sendWebhook error');
