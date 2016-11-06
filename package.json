@@ -1,7 +1,7 @@
 {
   "name": "outgoing",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "src/app.js",
   "license": "MIT",
   "dependencies": {
     "botkit": "^0.4.0",
@@ -13,7 +13,7 @@
   "scripts": {
     "dev": "babel -w src/ -d build/",
     "dist": "babel src/ -d dist/ --minified",
-    "lunchbot": "node dist/app"
+    "lunchbot": "node ./dist/app"
   },
   "devDependencies": {
     "babel-cli": "^6.18.0",
