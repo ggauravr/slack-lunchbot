@@ -4,7 +4,7 @@ import Bot from './lib/bot';
 import Store from './lib/store';
 import dotenv from 'dotenv';
 import Schedule from 'node-schedule';
-import {forEach, filter} from 'lodash';
+import {forEach} from 'lodash';
 
 dotenv.config();
 
