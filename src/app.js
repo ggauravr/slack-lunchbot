@@ -6,7 +6,7 @@ import dotenv from 'dotenv';
 import Schedule from 'node-schedule';
 import {forEach} from 'lodash';
 
-dotenv.config();
+if (process.env.NODE_ENV !== 'production') dotenv.config();
 
 let store = new Store();
 let slackbot = new Bot(config);

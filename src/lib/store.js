@@ -2,7 +2,7 @@
 import Firebase from 'firebase';
 import _ from 'lodash';
 import dotenv from 'dotenv';
-dotenv.config();
+if (process.env.NODE_ENV !== 'production') dotenv.config();
 
 class Store{
     constructor () {
