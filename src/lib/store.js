@@ -1,13 +1,15 @@
 'use strict';
 import Firebase from 'firebase';
 import _ from 'lodash';
+import dotenv from 'dotenv';
+dotenv.config();
 
 class Store{
-    constructor (config) {
+    constructor () {
         let _self = this;
         Firebase.initializeApp({
-            serviceAccount: config.apijson,
-            databaseURL: config.database
+            serviceAccount: process.env.FIREBASE_API,
+            databaseURL: process.env.FIREBASE_DB
         });
         this.db = Firebase.database();
         this.ref = this.db.ref('/');

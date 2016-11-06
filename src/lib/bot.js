@@ -1,11 +1,13 @@
 'use strict';
 import Botkit from 'botkit';
 import Cleverbot from 'cleverbot.io';
+import dotenv from 'dotenv';
+dotenv.config();
 
 class Bot{
     constructor (config){
         this.config = config;
-        this.cleverbot = new Cleverbot(this.config.cleverbot.apiuser, this.config.cleverbot.apikey);
+        this.cleverbot = new Cleverbot(process.env.CLEVERBOT_API_USER, process.env.CLEVERBOT_API_KEY);
         this.cleverbot.setNick('LunchBot'); 
         this.cleverbot.create(function (err, session) {  
             if (err) {
@@ -20,12 +22,12 @@ class Bot{
         });
 
         this.controller.spawn({
-            token: this.config.lunchbot.apitoken
+            token: process.env.SLACK_BOT_TOKEN
         }).startRTM();
 
         this.botWebhook = this.controller.spawn({
             incoming_webhook: {
-                url: this.config.slack.incomingwebhook
+                url: process.env.SLACK_INCOMING_WEBHOOK
             }
         })
     };

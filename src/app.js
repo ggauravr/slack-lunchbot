@@ -2,10 +2,13 @@
 import config from './config';
 import Bot from './lib/bot';
 import Store from './lib/store';
+import dotenv from 'dotenv';
 import Schedule from 'node-schedule';
 import {forEach, filter} from 'lodash';
 
-let store = new Store(config.firebase);
+dotenv.config();
+
+let store = new Store();
 let slackbot = new Bot(config);
 const AVAILABILITY = ['breakfast','lunch','dinner'];
 
