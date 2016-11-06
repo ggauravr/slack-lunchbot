@@ -17,7 +17,8 @@ slackbot.controller.hears(['suggest (.*)', 'suggest'],['direct_message','direct_
     let mealType = typeof (message.match[1] === 'undefined') ? message.match[1] :message.match[1].toLowerCase();
     let restriction = (AVAILABILITY.indexOf(mealType) < 0) ? 'all' : mealType;
     let suggestion = store.getRandomLunchVenue(restriction);
-    bot.reply(message, `Let's go to :knife_fork_plate: *${suggestion.title}* !`);
+    let emoji = config.slack.emoji[Math.floor(Math.random() * (config.slack.emoji.length - 1))];
+    bot.reply(message, `Let's go to ${emoji} *${suggestion.title}* !`);
 });
 
 slackbot.controller.hears(['list (.*)', 'list', 'list all'],['direct_message','direct_mention','mention'],function(bot,message) {
@@ -69,6 +70,7 @@ slackbot.controller.hears('',['direct_message','direct_mention','mention'],funct
 //Schedule
 let announcement = Schedule.scheduleJob(config.scheduler.schedule, function(){
     let suggestion = store.getRandomLunchVenue('all');
-    let txt = `Lunch time, peeps. Let's go to *${suggestion.title}* ! :smile:`; 
+    let emoji = config.slack.emoji[Math.floor(Math.random() * (config.slack.emoji.length - 1))];
+    let txt = `Lunch time, peeps. Let's go to ${emoji} *${suggestion.title}* ! :smile:`; 
     slackbot.sendIncomingWebhook(txt);
 });
