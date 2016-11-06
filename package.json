@@ -13,7 +13,7 @@
   "scripts": {
     "dev": "babel -w src/ -d build/",
     "dist": "babel src/ -d dist/ --minified",
-    "lunchbot": "node ./dist/app"
+    "start": "node ./dist/app"
   },
   "devDependencies": {
     "babel-cli": "^6.18.0",
