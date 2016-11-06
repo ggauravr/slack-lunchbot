@@ -2,7 +2,7 @@
 import Botkit from 'botkit';
 import Cleverbot from 'cleverbot.io';
 import dotenv from 'dotenv';
-if (process.env.NODE_ENV !== 'production') dotenv.config();
+if (process.env.NODE_ENV !== 'production') dotenv.config({ silent: process.env.NODE_ENV === 'production' });
 
 class Bot{
     constructor (config){
