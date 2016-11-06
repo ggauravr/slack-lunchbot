@@ -46,10 +46,15 @@ class Bot{
         });
     }
 
-    getUserName(bot, message,cb){
+    getUserInfo(bot, message,cb){
         bot.api.users.info({user: message.user}, (error, response) => {
-            let {name} = response.user;
-            cb(name);
+            cb(response.user);
+        })
+    }
+
+    getChannelInfo(bot, message,cb){
+        bot.api.channels.info({channel: message.channel}, (error, response) => {
+            cb(response.channel);
         })
     }
 

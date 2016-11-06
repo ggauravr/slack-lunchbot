@@ -32,25 +32,34 @@ slackbot.controller.hears(['list (.*)', 'list', 'list all'],['direct_message','d
 
 
 slackbot.controller.hears(['help', 'intro'],['direct_message','direct_mention','mention'],function(bot,message) {
-    let user = new Promise((resolve,reject) => slackbot.getUserName(bot,message,resolve));
-    user.then((name)=>{
-        var txt = `Hi @${name} :wave:\n\n Welcome to the ${config.slack.channel} channel. You can ask me for a lunch (breakfast or dinner) suggestion. \n Here are some commands you can start with: \n \`\`\`@${config.slack.username} suggest\n@${config.slack.username} suggest dinner\n@${config.slack.username} list \`\`\`\n\n Also at ${config.scheduler.text}, I will suggest a random venue for lunch. \n\n`;
+    let user = new Promise((resolve,reject) => slackbot.getUserInfo(bot,message,resolve));
+    let channel = new Promise((resolve,reject) => slackbot.getChannelInfo(bot,message,resolve));
+
+    Promise.all([user, channel]).then((val)=>{
+        let {name} = val[0];
+        let channelname = val[1].name;
+        var txt = `Hi @${name} :wave:\n\n Welcome to the #${channelname} channel. You can ask me for a lunch (breakfast or dinner) suggestion. \n Here are some commands you can start with: \n \`\`\`@${config.slack.username} suggest\n@${config.slack.username} suggest dinner\n@${config.slack.username} list \`\`\`\n\n Also at ${config.scheduler.text}, I will suggest a random venue for lunch. \n\n`;
         bot.reply(message, txt);
     })
 });
 
 //Listens for RTM events
 slackbot.controller.on('user_channel_join', function(bot, message) {
-    let user = new Promise((resolve,reject) => slackbot.getUserName(bot,message,resolve));
-    user.then((name)=>{
-        var txt = `Hi @${name} :wave:\n\nWelcome to the ${config.slack.channel} channel! Type \`@${config.slack.username} help\` for info.`;
-        bot.reply(message, txt);
+    let user = new Promise((resolve,reject) => slackbot.getUserInfo(bot,message,resolve));
+    let channel = new Promise((resolve,reject) => slackbot.getChannelInfo(bot,message,resolve));
+
+    Promise.all([user, channel]).then((val)=>{
+        let {name} = val[0];
+        let channelname = val[1].name;
+        if (config.slack.channel.indexOf(channelname)>=0){
+            var txt = `Hi @${name} :wave:\n\nWelcome to the ${config.slack.channel} channel! Type \`@${config.slack.username} help\` for info.`;
+            bot.reply(message, txt);
+        }
     })
 });
 
-
 //Making non meal related conversations
-slackbot.controller.hears('',['direct_message','direct_mention','mention'],function(bot,message) {  
+slackbot.controller.hears('',['direct_message','direct_mention','mention'],function(bot,message) {
     let msg = message.text;
     if (msg.length) {
        slackbot.cleverBotResponse(bot,message);
