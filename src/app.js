@@ -14,12 +14,12 @@ let slackbot = new Bot(config);
 const AVAILABILITY = ['breakfast','lunch','dinner'];
 
 let app = express();
-
+app.set('port', process.env.PORT || 5000)
 app.get('/', function (req, res) {
   res.send('Nothing to see here');
 })
 
-app.listen(1337, function () {
+app.listen(app.get('port'), function () {
   console.log('Express listening to port 3000');
 })
 
