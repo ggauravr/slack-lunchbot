@@ -20,7 +20,7 @@ app.get('/', function (req, res) {
 })
 
 app.listen(app.get('port'), function () {
-  console.log('Express listening to port 3000');
+  console.log('Express listening to port', app.get('port'));
 })
 
 //Listens for keywords
