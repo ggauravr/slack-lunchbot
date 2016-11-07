@@ -19,7 +19,7 @@ app.get('/', function (req, res) {
   res.send('Nothing to see here');
 })
 
-app.listen(3000, function () {
+app.listen(1337, function () {
   console.log('Express listening to port 3000');
 })
 
