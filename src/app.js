@@ -2,6 +2,7 @@
 import config from './config';
 import Bot from './lib/bot';
 import Store from './lib/store';
+import express from 'express';
 import dotenv from 'dotenv';
 import Schedule from 'node-schedule';
 import {forEach} from 'lodash';
@@ -11,6 +12,16 @@ if (process.env.NODE_ENV !== 'production') dotenv.config({ silent: process.env.N
 let store = new Store();
 let slackbot = new Bot(config);
 const AVAILABILITY = ['breakfast','lunch','dinner'];
+
+let app = express();
+
+app.get('/', function (req, res) {
+  res.send('Nothing to see here');
+})
+
+app.listen(3000, function () {
+  console.log('Express listening to port 3000');
+})
 
 //Listens for keywords
 slackbot.controller.hears(['suggest (.*)', 'suggest'],['direct_message','direct_mention','mention'],function(bot,message) {
