@@ -4,7 +4,7 @@
   "main": "src/app.js",
   "license": "MIT",
   "dependencies": {
-    "botkit": "^0.4.0",
+    "botkit": "^0.5.4",
     "cleverbot.io": "^1.0.4",
     "firebase": "^3.5.2",
     "lodash": "^4.16.6",
